@@ -18,6 +18,8 @@ class SchoolInsert
     return true
   end
   
+  # fix the role thing.
+  # don't hard code the ids.
   def insert_users
     first_names_f = ["Mary", "Jen", "Mia", "Amy", "Christine", "Andrea", 
                       "Rose", "Sophia", "Emma", "Olivia", "Ava", "Emily", 
@@ -132,8 +134,50 @@ class SchoolInsert
       client.query(final_str)
     end
     
-    # gen teachers names    
+    return true    
   end
+
+  # insert subjects.
+  def insert_subjects
+    client = self.connect
+    
+    db_str = "INSERT INTO subject (name) VALUES (\"english\");"
+    result = client.query(db_str)
+    
+    db_str = "INSERT INTO subject (name) VALUES (\"math\");"
+    result = client.query(db_str)
+    
+    db_str = "INSERT INTO subject (name) VALUES (\"history\");"
+    result = client.query(db_str)
+    
+    db_str = "INSERT INTO subject (name) VALUES (\"gelogy\");"
+    result = client.query(db_str)
+    
+    db_str = "INSERT INTO subject (name) VALUES (\"chemistry\");"
+    result = client.query(db_str)
+    
+    db_str = "INSERT INTO subject (name) VALUES (\"biology\");"
+    result = client.query(db_str)
+    
+    db_str = "INSERT INTO subject (name) VALUES (\"physics\");"
+    result = client.query(db_str)
+    
+    db_str = "INSERT INTO subject (name) VALUES (\"PE\");"
+    result = client.query(db_str)
+    
+    db_str = "INSERT INTO subject (name) VALUES (\"psychology\");"
+    result = client.query(db_str)
+    
+    db_str = "INSERT INTO subject (name) VALUES (\"economics\");"
+    result = client.query(db_str)
+    
+    db_str = "INSERT INTO subject (name) VALUES (\"under water basket weaving\");"
+    result = client.query(db_str)
+    
+    return true
+  end
+
+
 
 
   

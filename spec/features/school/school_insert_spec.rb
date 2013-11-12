@@ -26,6 +26,16 @@ describe SchoolInsert do
         expect(@si.insert_users).to eq(true)
       end
     end
+    
+    describe "subjects" do
+      before(:each) do
+        @si = SchoolInsert.new
+      end
+      
+      xit "should return true" do
+        expect(@si.insert_subjects).to eq(true)
+      end
+    end
   end
   
 end

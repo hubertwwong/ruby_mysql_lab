@@ -49,7 +49,7 @@ class SchoolCreate
                         "id INT NOT NULL AUTO_INCREMENT, " +
                         "subject_id INT, " +
                         "person_id INT, " +
-                        "period_id INT, " +
+                        "name VARCHAR(255), " +
                         "num_seat INT, " +
                         "num_wait_seat INT, " +
                         "status VARCHAR(255), " +
