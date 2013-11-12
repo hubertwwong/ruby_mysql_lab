@@ -1,7 +1,142 @@
 require "mysql2"
 
 class SchoolInsert
+  
+  # DB insert
+  ############################################################################
+  
+  # insert roles. student teacher.
+  def insert_roles
+    client = self.connect
+    
+    db_str = "INSERT INTO role (name) VALUES (\"student\");"
+    result = client.query(db_str)
+    
+    db_str = "INSERT INTO role (name) VALUES (\"teacher\");"
+    result = client.query(db_str)
+    
+    return true
+  end
+  
+  def insert_users
+    first_names_f = ["Mary", "Jen", "Mia", "Amy", "Christine", "Andrea", 
+                      "Rose", "Sophia", "Emma", "Olivia", "Ava", "Emily", 
+                      "Madison", "Chloe", "Lily", "Natalie", "Zoe", "Grace"]
+    first_names_m = ["John", "Jack", "Mike", "Tim", "Terry", "George", "Alex",
+                      "James", "Robert", "David", "Paul", "Mark", "Donald",
+                      "Kenneth", "Edward", "Kevin", "Scott", "Jerry"]
+    last_names = ["Smith", "Johnson", "Wilson", "Jones", "Brown", "Davis", 
+                    "Miller", "Wilson", "Anderson", "Moore", "Parker", "Evans",
+                    "Edwards", "Collins", "Stewart", "Morris", "Rogers", "Reed"]
+    
+    db_prefix = "INSERT INTO person " +
+                  "(first_name, last_name, role_id, gender) " +
+                  "VALUES "
+    
+    # db stuff
+    client = self.connect
+                      
+    # female students.
+    100.times do
+      final_str = ""
+    
+      index = Random.rand(first_names_f.size)
+      index2 = Random.rand(last_names.size)
+      
+      # variables to write
+      first_name = first_names_f[index]
+      last_name = last_names[index2]
+      role_id = 1
+      gender = "female" 
+      
+      # values string
+      final_str = db_prefix + "(" + 
+                              "\"" + first_name + "\", " +
+                              "\"" + last_name + "\", " +
+                              "" + role_id.to_s + ", " +
+                              "\"" + gender + "\"" +
+                              ");"
+      puts final_str
+      client.query(final_str)
+    end
+    
+    # male students.
+    100.times do
+      final_str = ""
+    
+      index = Random.rand(first_names_m.size)
+      index2 = Random.rand(last_names.size)
+      
+      # variables to write
+      first_name = first_names_m[index]
+      last_name = last_names[index2]
+      role_id = 1
+      gender = "male" 
+      
+      # values string
+      final_str = db_prefix + "(" + 
+                              "\"" + first_name + "\", " +
+                              "\"" + last_name + "\", " +
+                              "" + role_id.to_s + ", " +
+                              "\"" + gender + "\"" +
+                              ");"
+      puts final_str
+      client.query(final_str)
+    end
+    
+    # female teachers.
+    10.times do
+      final_str = ""
+    
+      index = Random.rand(first_names_f.size)
+      index2 = Random.rand(last_names.size)
+      
+      # variables to write
+      first_name = first_names_f[index]
+      last_name = last_names[index2]
+      role_id = 2
+      gender = "female" 
+      
+      # values string
+      final_str = db_prefix + "(" + 
+                              "\"" + first_name + "\", " +
+                              "\"" + last_name + "\", " +
+                              "" + role_id.to_s + ", " +
+                              "\"" + gender + "\"" +
+                              ");"
+      puts final_str
+      client.query(final_str)
+    end
+    
+    # male teachers.
+    10.times do
+      final_str = ""
+    
+      index = Random.rand(first_names_m.size)
+      index2 = Random.rand(last_names.size)
+      
+      # variables to write
+      first_name = first_names_m[index]
+      last_name = last_names[index2]
+      role_id = 2
+      gender = "male" 
+      
+      # values string
+      final_str = db_prefix + "(" + 
+                              "\"" + first_name + "\", " +
+                              "\"" + last_name + "\", " +
+                              "" + role_id.to_s + ", " +
+                              "\"" + gender + "\"" +
+                              ");"
+      puts final_str
+      client.query(final_str)
+    end
+    
+    # gen teachers names    
+  end
 
+
+  
   # DB CREDENTIALS
   ############################################################################
   
@@ -19,106 +154,4 @@ class SchoolInsert
                                 :password => "password")
   end
 
-  # DB CREATE
-  ############################################################################
-  
-  # create db
-  def create_db
-    client = self.connect_without_db
-    results = client.query("CREATE DATABASE school")
-    return true
-  end
-  
-  # create tables in db
-  # assumes you connected with the correct db.
-  # in this case school..
-  def create_tables
-    client = self.connect
-    
-    # create db strings
-    
-    # class descriptions. english. matth. etc...
-    db_str_subject = "CREATE TABLE subject (" +
-                     "id INT NOT NULL AUTO_INCREMENT, " +
-                     "name VARCHAR(255), " +
-                     "PRIMARY KEY (id)" +
-                   ");"
-                   
-    # a list of people for school.
-    db_str_person = "CREATE TABLE person (" +
-                      "id INT NOT NULL AUTO_INCREMENT, " +
-                      "first_name VARCHAR(255), " +
-                      "last_name VARCHAR(255), " +
-                      "role_id INT, " +
-                      "gender VARCHAR(255), " +
-                      "PRIMARY KEY (id)" +
-                     ");"
-    # role id... student or teacher.
-    db_str_role = "CREATE TABLE role (" +
-                    "id INT NOT NULL AUTO_INCREMENT, " +
-                    "name VARCHAR(255), " +
-                    "PRIMARY KEY (id)" +
-                  ");"
-    
-    # schedule of classes avaiable.
-    # status might be something like open close, wait etc...
-    db_str_schedule = "CREATE TABLE schedule (" +
-                        "id INT NOT NULL AUTO_INCREMENT, " +
-                        "subject_id INT, " +
-                        "person_id INT, " +
-                        "period_id INT, " +
-                        "num_seat INT, " +
-                        "num_wait_seat INT, " +
-                        "status VARCHAR(255), " +
-                        "PRIMARY KEY (id)" +
-                      ");"
-    
-    # describe what a period is.
-    # stuff like period 1 might run from 1:00pm to 2:00p on MWF
-    # probably am just going to ignore the date part
-    # and just use time.
-    db_str_period = "CREATE TABLE period (" +
-                      "id INT NOT NULL AUTO_INCREMENT, " +
-                      "mon_start DATETIME, " +
-                      "mon_end DATETIME, " +
-                      "tue_start DATETIME, " +
-                      "tue_end DATETIME, " +
-                      "wed_start DATETIME, " +
-                      "wed_end DATETIME, " +
-                      "thu_start DATETIME, " +
-                      "thu_end DATETIME, " +
-                      "fri_start DATETIME, " +
-                      "fri_end DATETIME, " +
-                      "sat_start DATETIME, " +
-                      "sat_end DATETIME, " +
-                      "sun_start DATETIME, " +
-                      "sun_end DATETIME, " +
-                      "PRIMARY KEY (id)" +
-                    ");"
-    
-    # student schedules.
-    db_str_student_schedule = "CREATE TABLE student_schedule (" +
-                                "id INT NOT NULL AUTO_INCREMENT, " +
-                                "schedule_id INT, " +
-                                "person_id INT, " +
-                                "PRIMARY KEY (id)" +
-                              ");"
-                  
-                  
-    results = client.query(db_str_subject)
-    results = client.query(db_str_person)
-    results = client.query(db_str_role)
-    results = client.query(db_str_schedule)
-    results = client.query(db_str_period)
-    results = client.query(db_str_student_schedule)
-    
-    return true
-  end
-  
 end
-
-# hello.db
-#
-# has a db called hello
-# has a table greeting
-# has 2 table values id name
