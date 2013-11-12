@@ -13,7 +13,7 @@ class Hello
                                 :username => "root", 
                                 :password => "password")
     results = client.query("SELECT * FROM greeting")
-    return results
+    return true
   end
   
 end

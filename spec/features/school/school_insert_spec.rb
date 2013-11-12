@@ -2,14 +2,23 @@ require_relative "../../../src/school/school_insert"
 
 describe SchoolInsert do
   
-  describe "insert" do
+  describe "create" do
     before(:each) do
       @si = SchoolInsert.new
-      @client = @si.connect
     end
     
-    it "should return true" do
-      @client.should == "world"
+    describe "db" do
+      describe "create" do
+        xit "should create db" do
+          expect(@si.create_db).to eq(true)
+        end
+      end
+      
+      describe "insert table" do
+        xit "should create tables" do
+          expect(@si.create_tables).to eq(true)
+        end
+      end
     end
   end
   

@@ -4,13 +4,13 @@ describe Hello do
   
   describe "hello" do
     it "should return true" do
-      Hello.hello.should == "world"
+      expect(Hello.hello).to eq("world")
     end
   end
   
   describe "db" do
     it "test1" do
-      Hello.test1.should == "world"
+      expect(Hello.test1).to eq(true)
     end
   end
   
