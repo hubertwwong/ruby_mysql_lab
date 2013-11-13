@@ -177,7 +177,109 @@ class SchoolInsert
     return true
   end
 
-
+  # periods
+  # using 0000-00-00 for invalid dates
+  # generating a set of valid start and end times.
+  # ususally schools have a set of schedules that class start and end on.
+  #
+  # keeping it simple. generate Mon Wed Fri and Tues Thu Sat with times listed.
+  def insert_periods
+    client = self.connect
+    
+    start_times = ["0000-00-00 10:00:00", "0000-00-00 14:00:00", "0000-00-00 18:00:00"]
+    end_times = ["0000-00-00 11:00:00", "0000-00-00 15:00:00", "0000-00-00 19:00:00"]
+    
+    # MWF classes.
+    start_times.each_with_index do |elem, i|
+      db_prefix = "INSERT INTO period (mon_start, mon_end, " +
+                                   "wed_start, wed_end, " + 
+                                   "fri_start, fri_end) VALUES "
+      db_values = "(" +
+                    "\"" + start_times[i] + "\", " +
+                    "\"" + end_times[i] + "\", " +
+                    "\"" + start_times[i] + "\", " +
+                    "\"" + end_times[i] + "\", " +
+                    "\"" + start_times[i] + "\", " +
+                    "\"" + end_times[i] + "\"" +
+                  ");"
+      final_str = db_prefix + db_values  
+      puts final_str           
+      client.query(final_str)  
+    end
+    
+    # TWS classes.
+    start_times.each_with_index do |elem, i|
+      db_prefix = "INSERT INTO period (tue_start, tue_end, " +
+                                   "thu_start, thu_end, " + 
+                                   "sat_start, sat_end) VALUES "
+      db_values = "(" +
+                    "\"" + start_times[i] + "\", " +
+                    "\"" + end_times[i] + "\", " +
+                    "\"" + start_times[i] + "\", " +
+                    "\"" + end_times[i] + "\", " +
+                    "\"" + start_times[i] + "\", " +
+                    "\"" + end_times[i] + "\"" +
+                  ");"
+      final_str = db_prefix + db_values  
+      puts final_str           
+      client.query(final_str)  
+    end
+    
+    return true
+  end
+  
+  # insert schedules
+  #
+  # randomized... assign teachers to classes and periods...
+  def insert_schedules
+    client = self.connect
+    
+    # figure out number of periods in the db.
+    # assume the index is 1-n
+    db_str = "SELECT * FROM period"
+    period_count = client.query(db_str).count
+    
+    # figure out number of subjects in the db.
+    # assumes the index is 1-n
+    db_str = "SELECT * FROM subject"
+    subject_count = client.query(db_str).count
+    
+    # figure out number of people in the db.
+    # when doing the check for random people.
+    # you need to check if its a teacher.
+    db_str = "SELECT * FROM person"
+    people_count = client.query(db_str).count
+    
+    # 20 classes...
+    # create 20 random classes.
+    30.times do
+      db_prefix = "INSERT INTO schedule (subject_id, person_id, period_id," +
+                        "num_seat, num_wait_seat, status) "
+      
+      cur_subject_id = Random.rand(subject_count) + 1
+      cur_period_id = Random.rand(period_count) + 1
+      cur_person_id = Random.rand(people_count) + 1
+      cur_num_seats = Random.rand(40) + 10
+      cur_num_wait_seats = Random.rand(10)
+      cur_status = "available"
+      
+      # construct values.
+      db_values = "VALUES (" +
+                    "" + cur_subject_id.to_s + ", " +
+                    "" + cur_person_id.to_s + ", " +
+                    "" + cur_period_id.to_s + ", " +
+                    "" + cur_num_seats.to_s + ", " +
+                    "" + cur_num_wait_seats.to_s + ", " +
+                    "\"" + cur_status + "\"" +
+                  ");"
+                  
+      # construct final sql string
+      final_str = db_prefix + db_values
+      puts final_str
+      
+    end
+    
+  end
 
 
   

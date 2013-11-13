@@ -36,6 +36,26 @@ describe SchoolInsert do
         expect(@si.insert_subjects).to eq(true)
       end
     end
+    
+    describe "periods" do
+      before(:each) do
+        @si = SchoolInsert.new
+      end
+      
+      xit "should return true" do
+        expect(@si.insert_periods).to eq(true)
+      end
+    end
+    
+    describe "schedules" do
+      before(:each) do
+        @si = SchoolInsert.new
+      end
+      
+      it "should return true" do
+        expect(@si.insert_schedules).to eq(true)
+      end
+    end
   end
   
 end
