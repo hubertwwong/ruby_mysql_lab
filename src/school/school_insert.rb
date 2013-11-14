@@ -138,6 +138,8 @@ class SchoolInsert
   end
 
   # insert subjects.
+  # probably fix this....
+  # so ithe subjects are in loops.
   def insert_subjects
     client = self.connect
     
