@@ -1,5 +1,7 @@
 require "mysql2"
 
+require_relative "school_query"
+
 class SchoolInsert
   
   # DB insert
@@ -14,6 +16,9 @@ class SchoolInsert
     
     db_str = "INSERT INTO role (name) VALUES (\"teacher\");"
     result = client.query(db_str)
+    
+    # close connection
+    client.close
     
     return true
   end
@@ -134,47 +139,30 @@ class SchoolInsert
       client.query(final_str)
     end
     
+    # close connection
+    client.close
+    
     return true    
   end
 
   # insert subjects.
   # probably fix this....
   # so ithe subjects are in loops.
+  # not tested...
   def insert_subjects
     client = self.connect
     
-    db_str = "INSERT INTO subject (name) VALUES (\"english\");"
-    result = client.query(db_str)
+    subjects = ["english", "math", "history", "gelogy", "chemistry",
+                "biology", "physics", "PE", "psychology", "economics",
+                "under water basket weaving."]
     
-    db_str = "INSERT INTO subject (name) VALUES (\"math\");"
-    result = client.query(db_str)
+    subjects.each do |subject|
+      db_str = "INSERT INTO subject (name) VALUES (\"" + subject + "\");"
+      result = client.query(db_str)
+    end
     
-    db_str = "INSERT INTO subject (name) VALUES (\"history\");"
-    result = client.query(db_str)
-    
-    db_str = "INSERT INTO subject (name) VALUES (\"gelogy\");"
-    result = client.query(db_str)
-    
-    db_str = "INSERT INTO subject (name) VALUES (\"chemistry\");"
-    result = client.query(db_str)
-    
-    db_str = "INSERT INTO subject (name) VALUES (\"biology\");"
-    result = client.query(db_str)
-    
-    db_str = "INSERT INTO subject (name) VALUES (\"physics\");"
-    result = client.query(db_str)
-    
-    db_str = "INSERT INTO subject (name) VALUES (\"PE\");"
-    result = client.query(db_str)
-    
-    db_str = "INSERT INTO subject (name) VALUES (\"psychology\");"
-    result = client.query(db_str)
-    
-    db_str = "INSERT INTO subject (name) VALUES (\"economics\");"
-    result = client.query(db_str)
-    
-    db_str = "INSERT INTO subject (name) VALUES (\"under water basket weaving\");"
-    result = client.query(db_str)
+    # close connection
+    client.close
     
     return true
   end
@@ -224,8 +212,11 @@ class SchoolInsert
                   ");"
       final_str = db_prefix + db_values  
       puts final_str           
-      client.query(final_str)  
+      client.query(final_str)
     end
+    
+    # close connection
+    client.close
     
     return true
   end
@@ -235,6 +226,7 @@ class SchoolInsert
   # randomized... assign teachers to classes and periods...
   def insert_schedules
     client = self.connect
+    delay_time = 0.1
     
     # figure out number of periods in the db.
     # assume the index is 1-n
@@ -254,8 +246,8 @@ class SchoolInsert
     
     # 20 classes...
     # create 20 random classes.
-    30.times do
-      db_prefix = "INSERT INTO schedule (subject_id, person_id, period_id," +
+    100.times do
+      db_prefix = "INSERT INTO schedule (subject_id, person_id, period_id, " +
                         "num_seat, num_wait_seat, status) "
       
       cur_subject_id = Random.rand(subject_count) + 1
@@ -264,6 +256,19 @@ class SchoolInsert
       cur_num_seats = Random.rand(40) + 10
       cur_num_wait_seats = Random.rand(10)
       cur_status = "available"
+      
+      # loop until the random person is a teacher.
+      sq = SchoolQuery.new
+      while sq.is_person_a_teacher?(cur_person_id) == false
+        # i think this spams the sql server.
+        # you are probably are going to run into a too many connection issue
+        # if you don't add a delay here.
+        sleep delay_time
+    
+        # unless sq.is_person_a_teacher?(cur_person_id)
+        cur_person_id = Random.rand(people_count) + 1  
+        puts ">> " + cur_person_id.to_s
+      end
       
       # construct values.
       db_values = "VALUES (" +
@@ -277,12 +282,73 @@ class SchoolInsert
                   
       # construct final sql string
       final_str = db_prefix + db_values
+      client.query(final_str)
       puts final_str
-      
     end
     
+    # close connection
+    client.close
+    
+    return true
   end
 
+  # create a list of classes that students visit...
+  #
+  # probably want to check if the student isn't register to a class
+  # that has a conflicting schedule.
+  # not sure how...
+  #
+  def insert_student_schedules
+    client = self.connect
+    delay_time = 0.1
+    
+    # figure out number of people in the db.
+    # when doing the check for random people.
+    # you need to check if its a teacher.
+    db_str = "SELECT * FROM person"
+    people_count = client.query(db_str).count
+    
+    # picks a random person....
+    # checks if it isn't a normal 
+    150.times do
+      # stored..
+      cur_person_id = -1
+      num_classes = -1
+      
+      # random person...
+      # loop until the random person is a teacher.
+      sq = SchoolQuery.new
+      while sq.is_person_a_student?(cur_person_id) == false
+        # i think this spams the sql server.
+        # you are probably are going to run into a too many connection issue
+        # if you don't add a delay here.
+        sleep delay_time
+    
+        # unless sq.is_person_a_teacher?(cur_person_id)
+        cur_person_id = Random.rand(people_count) + 1  
+        puts ">> " + cur_person_id.to_s
+      end
+      
+      # pick a random number of classes.
+      num_classes = Random.rand(5) + 1
+      
+      # picks a random class ...
+      num_classes.times do
+        # find a class that isn't in the students schedule..
+        
+      end
+      
+      # sql execute...
+      
+      # so far...
+      puts "so >> id " + cur_person_id.to_s + " num class " + num_classes.to_s
+    end
+    
+    # close sql...
+    client.close
+    
+    return true
+  end
 
   
   # DB CREDENTIALS

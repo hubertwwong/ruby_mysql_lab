@@ -1,0 +1,65 @@
+..******INSERT INTO schedule (subject_id, person_id, period_id, num_seat, num_wait_seat, status) VALUES (6, 201, 2, 17, 3, "available");
+INSERT INTO schedule (subject_id, person_id, period_id, num_seat, num_wait_seat, status) VALUES (2, 216, 3, 21, 5, "available");
+INSERT INTO schedule (subject_id, person_id, period_id, num_seat, num_wait_seat, status) VALUES (11, 202, 2, 18, 9, "available");
+INSERT INTO schedule (subject_id, person_id, period_id, num_seat, num_wait_seat, status) VALUES (5, 205, 5, 13, 1, "available");
+INSERT INTO schedule (subject_id, person_id, period_id, num_seat, num_wait_seat, status) VALUES (1, 215, 3, 37, 7, "available");
+INSERT INTO schedule (subject_id, person_id, period_id, num_seat, num_wait_seat, status) VALUES (6, 212, 4, 27, 8, "available");
+INSERT INTO schedule (subject_id, person_id, period_id, num_seat, num_wait_seat, status) VALUES (11, 220, 2, 32, 0, "available");
+INSERT INTO schedule (subject_id, person_id, period_id, num_seat, num_wait_seat, status) VALUES (4, 219, 1, 21, 8, "available");
+INSERT INTO schedule (subject_id, person_id, period_id, num_seat, num_wait_seat, status) VALUES (4, 211, 2, 12, 9, "available");
+INSERT INTO schedule (subject_id, person_id, period_id, num_seat, num_wait_seat, status) VALUES (9, 216, 5, 36, 3, "available");
+INSERT INTO schedule (subject_id, person_id, period_id, num_seat, num_wait_seat, status) VALUES (8, 206, 5, 39, 6, "available");
+INSERT INTO schedule (subject_id, person_id, period_id, num_seat, num_wait_seat, status) VALUES (6, 211, 1, 11, 5, "available");
+INSERT INTO schedule (subject_id, person_id, period_id, num_seat, num_wait_seat, status) VALUES (8, 218, 3, 23, 1, "available");
+INSERT INTO schedule (subject_id, person_id, period_id, num_seat, num_wait_seat, status) VALUES (6, 219, 6, 49, 3, "available");
+INSERT INTO schedule (subject_id, person_id, period_id, num_seat, num_wait_seat, status) VALUES (9, 215, 6, 21, 9, "available");
+INSERT INTO schedule (subject_id, person_id, period_id, num_seat, num_wait_seat, status) VALUES (4, 219, 5, 20, 5, "available");
+INSERT INTO schedule (subject_id, person_id, period_id, num_seat, num_wait_seat, status) VALUES (3, 218, 1, 40, 8, "available");
+F**
+
+Pending:
+  SchoolCreate create struct db should create db
+    # Temporarily disabled with xit
+    # ./spec/features/school/school_create_spec.rb:12
+  SchoolCreate create struct table should create tables
+    # Temporarily disabled with xit
+    # ./spec/features/school/school_create_spec.rb:18
+  SchoolInsert insert roles should return true
+    # Temporarily disabled with xit
+    # ./spec/features/school/school_insert_spec.rb:15
+  SchoolInsert insert persons should return true
+    # Temporarily disabled with xit
+    # ./spec/features/school/school_insert_spec.rb:25
+  SchoolInsert insert subjects should return true
+    # Temporarily disabled with xit
+    # ./spec/features/school/school_insert_spec.rb:35
+  SchoolInsert insert periods should return true
+    # Temporarily disabled with xit
+    # ./spec/features/school/school_insert_spec.rb:45
+  SchoolQuery query is_person_a_teacher? 110 should return true
+    # Temporarily disabled with xit
+    # ./spec/features/school/school_query_spec.rb:15
+  SchoolQuery query is_person_a_teacher? 20 should return true
+    # Temporarily disabled with xit
+    # ./spec/features/school/school_query_spec.rb:20
+
+Failures:
+
+  1) SchoolInsert insert schedules should return true
+     Failure/Error: expect(@si.insert_schedules).to eq(true)
+     Mysql2::Error:
+       Too many connections
+     # ./src/school/school_query.rb:38:in `new'
+     # ./src/school/school_query.rb:38:in `connect'
+     # ./src/school/school_query.rb:8:in `is_person_a_teacher?'
+     # ./src/school/school_insert.rb:249:in `block in insert_schedules'
+     # ./src/school/school_insert.rb:236:in `times'
+     # ./src/school/school_insert.rb:236:in `insert_schedules'
+     # ./spec/features/school/school_insert_spec.rb:56:in `block (4 levels) in <top (required)>'
+
+Finished in 0.51581 seconds
+11 examples, 1 failure, 8 pending
+
+Failed examples:
+
+rspec ./spec/features/school/school_insert_spec.rb:55 # SchoolInsert insert schedules should return true

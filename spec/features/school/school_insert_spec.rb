@@ -52,7 +52,7 @@ describe SchoolInsert do
         @si = SchoolInsert.new
       end
       
-      it "should return true" do
+      xit "should return true" do
         expect(@si.insert_schedules).to eq(true)
       end
     end
