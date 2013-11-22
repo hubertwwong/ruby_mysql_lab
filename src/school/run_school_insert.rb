@@ -14,4 +14,3 @@ si = SchoolInsert.new
 #si.insert_periods
 #si.insert_schedules
 si.insert_student_schedules
-#si.insert_student_schedules

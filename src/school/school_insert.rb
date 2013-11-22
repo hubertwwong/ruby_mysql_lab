@@ -301,12 +301,12 @@ class SchoolInsert
   def insert_student_schedules
     client = self.connect
     delay_time = 0.1
+    squ = SchoolQuery.new
     
-    # figure out number of people in the db.
-    # when doing the check for random people.
-    # you need to check if its a teacher.
-    db_str = "SELECT * FROM person"
-    people_count = client.query(db_str).count
+    # count number of items in these tables.
+    # used to randomly pick random students and classes.
+    people_count = squ.count_table("person")
+    schedule_count = squ.count_table("schedule")
     
     # picks a random person....
     # checks if it isn't a normal 
@@ -314,11 +314,11 @@ class SchoolInsert
       # stored..
       cur_person_id = -1
       num_classes = -1
+      cur_schedule_id = -1
       
       # random person...
       # loop until the random person is a teacher.
-      sq = SchoolQuery.new
-      while sq.is_person_a_student?(cur_person_id) == false
+      while squ.is_person_a_student?(cur_person_id) == false
         # i think this spams the sql server.
         # you are probably are going to run into a too many connection issue
         # if you don't add a delay here.
@@ -334,14 +334,26 @@ class SchoolInsert
       
       # picks a random class ...
       num_classes.times do
-        # find a class that isn't in the students schedule..
+        # need to seed a random one to start.
+        cur_schedule_id = Random.rand(schedule_count) + 1
         
+        # find a class that isn't in the students schedule..
+        while squ.is_person_taking_a_class?(cur_person_id, cur_schedule_id) == true
+          sleep delay_time
+          
+          cur_schedule_id = Random.rand(schedule_count) + 1  
+          puts ">> " + cur_schedule_id.to_s
+        end
+        
+        # write..
+        db_sql = "INSERT INTO student_schedule (schedule_id, person_id) " +
+                    "VALUES (" +
+                      cur_schedule_id.to_s + ", " + 
+                      cur_person_id.to_s +
+                    ");"
+        puts db_sql
+        client.query(db_sql)
       end
-      
-      # sql execute...
-      
-      # so far...
-      puts "so >> id " + cur_person_id.to_s + " num class " + num_classes.to_s
     end
     
     # close sql...
