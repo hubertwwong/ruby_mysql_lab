@@ -22,8 +22,8 @@ class SpaceShipInsertSequel
                         "'bar' " +
                       ");"
     
-    client.query(db_str)
-    client.close
+    client.run(db_str)
+    client.disconnect
     
     puts "foo bar inserted"
     
@@ -31,7 +31,7 @@ class SpaceShipInsertSequel
   end
 
   # naive implementation
-  # 1000 for about 5 seconds..
+  # 1000 for about 7 vs. 5 seconds on a raw db
   def naive_insert(num_times)
     client = self.connect
     r = Random.new
@@ -44,10 +44,10 @@ class SpaceShipInsertSequel
                               "'bar' " +
                             ");"
       #puts db_str   
-      client.query(db_str)  
+      client.run(db_str)  
     end
     
-    client.close
+    client.disconnect
     
     puts "foo bar inserted"
     
@@ -64,15 +64,15 @@ class SpaceShipInsertSequel
 
 
   # transaction implementation
-  # 1000 for about 1 seconds..
-  # seems like you getting a 4-6x performance increase...
+  # 1000 for about 3 seconds..
+  # seems like you getting a 2x performance increase... but 6x worse..
   # transctions.
   def transaction_insert(num_times)
     client = self.connect
     r = Random.new
     
     # transaction start..
-    client.query "START TRANSACTION"
+    client.run "START TRANSACTION"
     
     # insert test..
     1.upto(num_times) do |i|
@@ -82,15 +82,15 @@ class SpaceShipInsertSequel
                               "'bar' " +
                             ");"
       #puts db_str   
-      client.query(db_str)  
+      client.run db_str  
     end
     
     # transaction start..
-    client.query "COMMIT"
+    client.run "COMMIT"
     
     # cleanup
     puts "insertion complete"
-    client.close
+    client.disconnect
     
     return true
   end
@@ -99,6 +99,42 @@ class SpaceShipInsertSequel
     Benchmark.bm do |bm|
       bm.report do
         self.transaction_insert(num_times)    
+      end
+    end      
+  end
+
+
+  # transaction 2 implementation
+  # more sequelish transaction.
+  # transctions.
+  def transaction2_insert(num_times)
+    client = self.connect
+    dataset = client[:fleet]
+    r = Random.new
+    
+    # transaction start..
+    client.transaction do
+    
+      # insert test..
+      1.upto(num_times) do |i|
+        dataset.insert(:name => 'foo' + r.rand(100).to_s,
+                       :description => 'bar')  
+      end
+    
+    # transaction end
+    end
+    
+    # cleanup
+    puts "insertion complete"
+    client.disconnect
+    
+    return true
+  end
+  
+  def bench_transaction2(num_times)
+    Benchmark.bm do |bm|
+      bm.report do
+        self.transaction2_insert(num_times)    
       end
     end      
   end
