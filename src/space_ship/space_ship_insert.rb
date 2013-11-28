@@ -112,17 +112,21 @@ class SpaceShipInsert
 
 
 
-
+  # 20x from the transaction....
+  # much faster...
   def csv_insert
     client = self.connect
     r = Random.new
     
     # (name, description)
-    db_str = "LOAD DATA INFILE 'fleet-blah.csv' " +
+    # /home/user/Dropbox/code/main/ruby/ruby_mysql_lab/src/space_ship
+    # note column list at the end....
+    db_str = "LOAD DATA INFILE '/home/user/fleet.csv' " +
                               "INTO TABLE fleet " +
-                              "FIELDS TERMINATED BY ',' " +
-                              "(@dummy, name, description) " +
-                              "IGNORE 1 LINES;"
+                              "FIELDS TERMINATED BY '\t' " +
+                              "IGNORE 1 LINES " +
+                              "(@dummy, name, description);"
+                              
     puts db_str                          
     client.query(db_str)  
     
