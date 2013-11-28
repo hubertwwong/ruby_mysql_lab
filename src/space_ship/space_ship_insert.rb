@@ -28,6 +28,11 @@ class SpaceShipInsert
     return true
   end
 
+
+
+
+
+
   # naive implementation
   # 1000 for about 5 seconds..
   def naive_insert(num_times)
@@ -47,7 +52,7 @@ class SpaceShipInsert
     
     client.close
     
-    puts "foo bar inserted"
+    puts "naive insertion complete"
     
     return true
   end
@@ -59,6 +64,10 @@ class SpaceShipInsert
       end
     end      
   end
+
+
+
+
 
 
   # transaction implementation
@@ -87,7 +96,7 @@ class SpaceShipInsert
     client.query "COMMIT"
     
     # cleanup
-    puts "insertion complete"
+    puts "transaction insertion complete"
     client.close
     
     return true
@@ -97,6 +106,38 @@ class SpaceShipInsert
     Benchmark.bm do |bm|
       bm.report do
         self.transaction_insert(num_times)    
+      end
+    end      
+  end
+
+
+
+
+  def csv_insert
+    client = self.connect
+    r = Random.new
+    
+    # (name, description)
+    db_str = "LOAD DATA INFILE 'fleet-blah.csv' " +
+                              "INTO TABLE fleet " +
+                              "FIELDS TERMINATED BY ',' " +
+                              "(@dummy, name, description) " +
+                              "IGNORE 1 LINES;"
+    puts db_str                          
+    client.query(db_str)  
+    
+
+    # cleanup
+    puts "insertion csv complete"
+    client.close
+    
+    return true
+  end
+
+  def bench_csv
+    Benchmark.bm do |bm|
+      bm.report do
+        self.csv_insert    
       end
     end      
   end
