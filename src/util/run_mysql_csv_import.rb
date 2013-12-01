@@ -6,12 +6,12 @@ credentials = {:url => "localhost",
                :password => "password"}
 mci = MySQLCSVImport.new credentials
               
-opt = {:filename => "/home/user/fleet.csv",
+opt = {:filename => "/home/user/fleet2.csv",
        :table_name => "fleet",
        :skip_num_lines => 1,
-       :term_fields_by => "\t",
+       :term_fields_by => ",",
        :enclosed_by => nil,
        :escaped_by => nil,
-       :term_line_by => "\n\r",
+       :term_line_by => "\n",
        :col_names => "@dummy, name, description"}
 mci.import_csv opt

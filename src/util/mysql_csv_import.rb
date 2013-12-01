@@ -94,7 +94,7 @@ class MySQLCSVImport
     # you need to specify this.
     if term_line_by != nil
       db_str = db_str + " LINES TERMINATED BY '" + 
-               term_fields_by + "'"
+               term_line_by + "'"
     end
     
     # if you have titles, add a number to skip those lines
@@ -114,7 +114,9 @@ class MySQLCSVImport
                col_names + ")"
     end
     
+    puts "> db query to write"
     puts db_str
+    puts ""
     
     return db_str
   end
