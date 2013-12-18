@@ -88,7 +88,6 @@ class SpaceShipInsert
   # much faster...
   def csv_insert
     client = self.connect
-    r = Random.new
     
     # (name, description)
     # /home/user/Dropbox/code/main/ruby/ruby_mysql_lab/src/space_ship
