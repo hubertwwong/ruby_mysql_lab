@@ -5,3 +5,4 @@ ss = SpaceShipInsertSequel.new
 ss.bench_naive(1000)
 ss.bench_transaction(1000)
 ss.bench_transaction2(1000)
+ss.bench_raw_sql_insert

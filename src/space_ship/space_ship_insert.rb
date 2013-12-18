@@ -23,15 +23,10 @@ class SpaceShipInsert
     client.query(db_str)
     client.close
     
-    puts "foo bar inserted"
+    puts "basic insert complete"
     
     return true
   end
-
-
-
-
-
 
   # naive implementation
   # 1000 for about 5 seconds..
@@ -56,19 +51,6 @@ class SpaceShipInsert
     
     return true
   end
-  
-  def bench_naive(num_times)
-    Benchmark.bm do |bm|
-      bm.report do
-        self.naive_insert(num_times)    
-      end
-    end      
-  end
-
-
-
-
-
 
   # transaction implementation
   # 1000 for about 1 seconds..
@@ -101,16 +83,6 @@ class SpaceShipInsert
     
     return true
   end
-  
-  def bench_transaction(num_times)
-    Benchmark.bm do |bm|
-      bm.report do
-        self.transaction_insert(num_times)    
-      end
-    end      
-  end
-
-
 
   # 20x from the transaction....
   # much faster...
@@ -132,12 +104,33 @@ class SpaceShipInsert
     
 
     # cleanup
-    puts "insertion csv complete"
+    puts "csv insert complete"
     client.close
     
     return true
   end
 
+
+
+  # BENCHMARK WRAPPERS
+  ############################################################################
+
+  def bench_naive(num_times)
+    Benchmark.bm do |bm|
+      bm.report do
+        self.naive_insert(num_times)    
+      end
+    end      
+  end
+
+  def bench_transaction(num_times)
+    Benchmark.bm do |bm|
+      bm.report do
+        self.transaction_insert(num_times)    
+      end
+    end      
+  end
+  
   def bench_csv
     Benchmark.bm do |bm|
       bm.report do
@@ -146,7 +139,7 @@ class SpaceShipInsert
     end      
   end
 
-
+  
 
 
   # DB CREDENTIALS

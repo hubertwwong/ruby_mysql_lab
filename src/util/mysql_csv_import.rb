@@ -15,7 +15,7 @@ class MySQLCSVImport
     @db = Mysql2::Client.new(:host => @url, 
                              :database => @db_name,
                              :username => @user, 
-                             :password => password)
+                             :password => @password)
   end
   
   # pass a nil to the param if you don't need it.

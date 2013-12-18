@@ -49,20 +49,11 @@ class SpaceShipInsertSequel
     
     client.disconnect
     
-    puts "foo bar inserted"
+    puts "naive insert"
     
     return true
   end
   
-  def bench_naive(num_times)
-    Benchmark.bm do |bm|
-      bm.report do
-        self.naive_insert(num_times)    
-      end
-    end      
-  end
-
-
   # transaction implementation
   # 1000 for about 3 seconds..
   # seems like you getting a 2x performance increase... but 6x worse..
@@ -89,21 +80,12 @@ class SpaceShipInsertSequel
     client.run "COMMIT"
     
     # cleanup
-    puts "insertion complete"
+    puts "transaction insert"
     client.disconnect
     
     return true
   end
   
-  def bench_transaction(num_times)
-    Benchmark.bm do |bm|
-      bm.report do
-        self.transaction_insert(num_times)    
-      end
-    end      
-  end
-
-
   # transaction 2 implementation
   # more sequelish transaction.
   # transctions.
@@ -125,12 +107,55 @@ class SpaceShipInsertSequel
     end
     
     # cleanup
-    puts "insertion complete"
+    puts "transaction2 insert"
     client.disconnect
     
     return true
   end
   
+  # just using sequel as a raw bridge to punch in mysql commands
+  def raw_sql_insert
+    client = self.connect
+    dataset = client[:fleet]
+    
+    db_str = "LOAD DATA INFILE '/home/user/fleet.csv' " +
+                              "INTO TABLE fleet " +
+                              "FIELDS TERMINATED BY '\t' " +
+                              "IGNORE 1 LINES " +
+                              "(@dummy, name, description);"
+    
+    # raw mysql query.
+    client.run(db_str)
+    
+    # cleanup
+    puts "raw sql insert"
+    client.disconnect
+    
+    return true
+  end
+  
+  
+  
+  
+  # BENCHMARK WRAPPERS
+  ############################################################################
+  
+  def bench_naive(num_times)
+    Benchmark.bm do |bm|
+      bm.report do
+        self.naive_insert(num_times)    
+      end
+    end      
+  end
+
+  def bench_transaction(num_times)
+    Benchmark.bm do |bm|
+      bm.report do
+        self.transaction_insert(num_times)    
+      end
+    end      
+  end
+
   def bench_transaction2(num_times)
     Benchmark.bm do |bm|
       bm.report do
@@ -138,6 +163,17 @@ class SpaceShipInsertSequel
       end
     end      
   end
+
+  def bench_raw_sql_insert
+    Benchmark.bm do |bm|
+      bm.report do
+        self.raw_sql_insert    
+      end
+    end      
+  end
+
+
+
 
 
 
